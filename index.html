@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es-CR">
+    <head>
+        <title>Calculadora Laboral - Costa Rica</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="css/style.css">
+        <script src="javascript/calculadora.js"></script>
+    </head>
+    <body>
+        <h1>Calculadora de Salarios</h1>
+        <div id="calculator">
+            <div class="form-group" id="Data">
+                <label for="sueldoBruto">Sueldo Bruto Mensual:</label>
+                <input type="number" id="sueldoBruto" placeholder="Ingrese el sueldo bruto" step="0.01">
+                <button onclick="calcular()">Calcular</button>
+            </div>
+            <table id="Resumen" hidden="true">
+                <caption><h3>Resumen</h3></caption>
+                <tr>
+                    <th>Concepto</th>
+                    <th>Montos</th>
+                </tr>
+                <tr>
+                    <td>Salario Bruto</td>
+                    <td>₡<span id="bruto">0.00</span></td>
+                </tr>                
+                <tr>
+                    <td>CCSS</td>
+                    <td>-₡<span id="ccss">0.00</span></td>
+                </tr>
+                <tr>
+                    <td>Ministerio de Hacienda</td>
+                    <td>-₡<span id="hacienda">0.00</span></td>
+                </tr>
+                <tr>
+                    <td>Salario Neto</td>
+                    <td>₡<span id="salarioNeto">0.00</span></td>
+                </tr>  
+                <tr>
+                    <td>Monto Quincenal:</td>
+                    <td>₡<span id="montoQuincenal">0.00</span></td>
+                </tr>
+            </table>
+            <br><h3>Desgloce de los rebajos</h3>
+            <table id="tablaCCSS">
+                <tr>
+                    <th>Concepto</th>
+                    <th>Porcentaje</th>
+                    <th>Monto</th>
+                </tr>
+                <tr>
+                    <td>CCSS</td>
+                    <td>10.67%</td>
+                    <td>₡<span id="rebajoCCSS">0.00</span></td>
+                </tr>
+            </table>
+            <table id="tablaMH">
+                <tr>
+                    <th>Concepto</th>
+                    <th>Tracto</th>
+                    <th>Porcentaje</th>
+                    <th>Monto</th>
+                </tr>
+                <tr id="fila-tracto1">
+                    <td>Ministerio de Hacienda</td>
+                    <td>₡941.000 - ₡1.381.000</td>
+                    <td>10%</td>
+                    <td>₡<span id="tracto1">0.00</span></td>
+                </tr>
+                <tr id="fila-tracto2">
+                    <td>Ministerio de Hacienda</td>
+                    <td>₡1.381.000 - ₡2.423.000</td>
+                    <td>15%</td>
+                    <td>₡<span id="tracto2">0.00</span></td>
+                </tr>
+                <tr id="fila-tracto3">
+                    <td>Ministerio de Hacienda</td>
+                    <td>₡2.423.000 - ₡4.845.000</td>
+                    <td>20%</td>
+                    <td>₡<span id="tracto3">0.00</span></td>
+                </tr>
+                <tr id="fila-tracto4">
+                    <td>Ministerio de Hacienda</td>
+                    <td>₡4.845.000 o más</td>
+                    <td>25%</td>
+                    <td>₡<span id="tracto4">0.00</span></td>
+                </tr>
+                <tr class="total-row">
+                    <td></td>
+                    <td>Total</td>
+                    <td></td>
+                    <td>₡<span id="rebajoMH">0.00</span></td>
+                </tr>
+            </table>
+            <br><br><br>
+            <div class="form-group" id="Otro" hidden="true">
+                <button onclick="otro()">Nuevo Calculo</button>
+            </div>
+        </div>
+    </body>
+</html>
