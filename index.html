@@ -5,6 +5,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="css/style.css">
+        <script src="javascript/laborRates.js"></script>
         <script src="javascript/calculadora.js"></script>
     </head>
     <body>
@@ -13,6 +14,12 @@
             <div class="form-group" id="Data">
                 <label for="sueldoBruto">Sueldo Bruto Mensual:</label>
                 <input type="number" id="sueldoBruto" placeholder="Ingrese el sueldo bruto" step="0.01">
+                <label for="hijos">Hijos para crédito fiscal:</label>
+                <input type="number" id="hijos" value="0" min="0" step="1">
+                <label>
+                    <input type="checkbox" id="conyuge">
+                    Aplicar crédito por cónyuge
+                </label>
                 <button onclick="calcular()">Calcular</button>
             </div>
             <table id="Resumen" hidden="true">
@@ -42,7 +49,9 @@
                     <td>₡<span id="montoQuincenal">0.00</span></td>
                 </tr>
             </table>
-            <br><h3>Desgloce de los rebajos</h3>
+            <br><h3>Desglose de los rebajos</h3>
+            <p class="nota-legal">Tarifas actualizadas para Costa Rica, periodo fiscal 2026.</p>
+            <p class="nota-legal">La deducción de CCSS del trabajador corresponde al 10.83% del salario bruto.</p>
             <table id="tablaCCSS">
                 <tr>
                     <th>Concepto</th>
@@ -50,39 +59,110 @@
                     <th>Monto</th>
                 </tr>
                 <tr>
-                    <td>CCSS</td>
-                    <td>10.67%</td>
+                    <td>SEM trabajador</td>
+                    <td>5.50%</td>
+                    <td>₡<span id="rebajoSEM">0.00</span></td>
+                </tr>
+                <tr>
+                    <td>IVM trabajador</td>
+                    <td>4.33%</td>
+                    <td>₡<span id="rebajoIVM">0.00</span></td>
+                </tr>
+                <tr>
+                    <td>Banco Popular / LPT trabajador</td>
+                    <td>1.00%</td>
+                    <td>₡<span id="rebajoLPT">0.00</span></td>
+                </tr>
+                <tr class="total-row">
+                    <td>Total CCSS trabajador</td>
+                    <td>10.83%</td>
                     <td>₡<span id="rebajoCCSS">0.00</span></td>
                 </tr>
             </table>
+            <p class="nota-legal">El cálculo de cargas patronales es referencial; la prima de Riesgos del Trabajo puede variar.</p>
+            <table id="tablaPatronal">
+                <tr>
+                    <th>Concepto patronal referencial</th>
+                    <th>Porcentaje</th>
+                </tr>
+                <tr>
+                    <td>SEM</td>
+                    <td>9.25%</td>
+                </tr>
+                <tr>
+                    <td>IVM</td>
+                    <td>5.58%</td>
+                </tr>
+                <tr>
+                    <td>Banco Popular cuota patronal</td>
+                    <td>0.25%</td>
+                </tr>
+                <tr>
+                    <td>Asignaciones Familiares / FODESAF</td>
+                    <td>5.00%</td>
+                </tr>
+                <tr>
+                    <td>IMAS</td>
+                    <td>0.50%</td>
+                </tr>
+                <tr>
+                    <td>INA</td>
+                    <td>1.50%</td>
+                </tr>
+                <tr>
+                    <td>Banco Popular LPT patrono</td>
+                    <td>0.25%</td>
+                </tr>
+                <tr>
+                    <td>Fondo de Capitalización Laboral</td>
+                    <td>1.50%</td>
+                </tr>
+                <tr>
+                    <td>Fondo de Pensiones Complementarias</td>
+                    <td>2.00%</td>
+                </tr>
+                <tr>
+                    <td>INS / Riesgos del Trabajo referencial</td>
+                    <td>1.00%</td>
+                </tr>
+                <tr class="total-row">
+                    <td>Total patronal aproximado</td>
+                    <td>26.83%</td>
+                </tr>
+                <tr class="total-row">
+                    <td>Total obrero-patronal referencial</td>
+                    <td>37.66%</td>
+                </tr>
+            </table>
+            <p class="nota-legal">El impuesto sobre la renta se calcula de forma progresiva según los tramos publicados por Hacienda.</p>
             <table id="tablaMH">
                 <tr>
                     <th>Concepto</th>
-                    <th>Tracto</th>
+                    <th>Tramo</th>
                     <th>Porcentaje</th>
                     <th>Monto</th>
                 </tr>
                 <tr id="fila-tracto1">
                     <td>Ministerio de Hacienda</td>
-                    <td>₡941.000 - ₡1.381.000</td>
+                    <td>Exceso de ₡918.000 y hasta ₡1.347.000</td>
                     <td>10%</td>
                     <td>₡<span id="tracto1">0.00</span></td>
                 </tr>
                 <tr id="fila-tracto2">
                     <td>Ministerio de Hacienda</td>
-                    <td>₡1.381.000 - ₡2.423.000</td>
+                    <td>Exceso de ₡1.347.000 y hasta ₡2.364.000</td>
                     <td>15%</td>
                     <td>₡<span id="tracto2">0.00</span></td>
                 </tr>
                 <tr id="fila-tracto3">
                     <td>Ministerio de Hacienda</td>
-                    <td>₡2.423.000 - ₡4.845.000</td>
+                    <td>Exceso de ₡2.364.000 y hasta ₡4.727.000</td>
                     <td>20%</td>
                     <td>₡<span id="tracto3">0.00</span></td>
                 </tr>
                 <tr id="fila-tracto4">
                     <td>Ministerio de Hacienda</td>
-                    <td>₡4.845.000 o más</td>
+                    <td>Exceso de ₡4.727.000</td>
                     <td>25%</td>
                     <td>₡<span id="tracto4">0.00</span></td>
                 </tr>

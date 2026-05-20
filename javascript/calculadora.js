@@ -7,71 +7,71 @@ function calcular() {
     document.getElementById("Resumen").hidden = false;
     document.getElementById("Data").hidden = true;
     var sueldoBruto = parseFloat(document.getElementById("sueldoBruto").value);
-    document.getElementById("bruto").textContent = new Intl.NumberFormat('es-CR').format(sueldoBruto);
-    var ccss = rebajoCCSS(sueldoBruto);
-    var mh = rebajoMH(sueldoBruto);
+    var hijos = parseInt(document.getElementById("hijos").value, 10) || 0;
+    var conyuge = document.getElementById("conyuge").checked;
+    var resultado = calcularSalarioNeto(sueldoBruto, { hijos: hijos, conyuge: conyuge });
 
-    var salarioNeto = sueldoBruto - ccss - mh;
-    var montoQuincenal = salarioNeto / 2;
+    document.getElementById("bruto").textContent = new Intl.NumberFormat('es-CR').format(sueldoBruto);
+    rebajoCCSS(sueldoBruto);
+    rebajoMH(sueldoBruto, { hijos: hijos, conyuge: conyuge });
+
+    var montoQuincenal = resultado.salarioNeto / 2;
     
-    document.getElementById("salarioNeto").textContent = new Intl.NumberFormat('es-CR').format(salarioNeto.toFixed(2));
-    document.getElementById("montoQuincenal").textContent = new Intl.NumberFormat('es-CR').format(montoQuincenal.toFixed(2));
+    document.getElementById("salarioNeto").textContent = formatearMonto(resultado.salarioNeto);
+    document.getElementById("montoQuincenal").textContent = formatearMonto(montoQuincenal);
     document.getElementById("Otro").hidden = false;
 } //función para calcular los rebajos
 
 function rebajoCCSS(sueldoBruto) {
-    var ccss = sueldoBruto * 0.1067;
-    document.getElementById("ccss").textContent = new Intl.NumberFormat('es-CR').format(ccss.toFixed(2));
-    document.getElementById("rebajoCCSS").textContent = new Intl.NumberFormat('es-CR').format(ccss.toFixed(2));
+    var ccss = calcularCCSSTrabajador(sueldoBruto);
+    var salario = Number(sueldoBruto) || 0;
+
+    document.getElementById("ccss").textContent = formatearMonto(ccss);
+    document.getElementById("rebajoSEM").textContent = formatearMonto(salario * COSTA_RICA_LABOR_RATES.ccss.trabajador.sem);
+    document.getElementById("rebajoIVM").textContent = formatearMonto(salario * COSTA_RICA_LABOR_RATES.ccss.trabajador.ivm);
+    document.getElementById("rebajoLPT").textContent = formatearMonto(salario * COSTA_RICA_LABOR_RATES.ccss.trabajador.bancoPopularLpt);
+    document.getElementById("rebajoCCSS").textContent = formatearMonto(ccss);
     return ccss;
 }
 
-function rebajoMH(sueldoBruto) {
-    var tracto1 = 0;
-    var tracto2 = 0;
-    var tracto3 = 0;
-    var tracto4 = 0;
+function rebajoMH(sueldoBruto, creditos) {
+    var tramos = calcularDesgloseRenta(sueldoBruto);
     
-    if (sueldoBruto < 941000) {
-        document.getElementById("fila-tracto1").hidden = true;
-        document.getElementById("fila-tracto2").hidden = true;
-        document.getElementById("fila-tracto3").hidden = true;
-        document.getElementById("fila-tracto4").hidden = true;
-    }
-    if (941000 < sueldoBruto && sueldoBruto <= 1381000) {
-        tracto1 = (sueldoBruto - 941000) * 0.10;
-        document.getElementById("fila-tracto2").hidden = true;
-        document.getElementById("fila-tracto3").hidden = true;
-        document.getElementById("fila-tracto4").hidden = true;
-    }
-    if (1381000 < sueldoBruto && sueldoBruto <= 2423000) {
-        tracto1 = 44000;
-        tracto2 = (sueldoBruto - 1381000) * 0.15;
-        document.getElementById("fila-tracto3").hidden = true;
-        document.getElementById("fila-tracto4").hidden = true;
-    }
-    if (2423000 < sueldoBruto && sueldoBruto <= 4845000) {
-        tracto1 = 44000;
-        tracto2 = 156200;
-        tracto3 = (sueldoBruto - 2423000) * 0.20;
-        document.getElementById("fila-tracto4").hidden = true;
-    }
-    if (sueldoBruto > 4845000) {
-        tracto1 = 44000;
-        tracto2 = 156200;
-        tracto3 = 484400;
-        tracto4 = (sueldoBruto - 4845000) * 0.25;
-    }
+    document.getElementById("fila-tracto1").hidden = tramos[0] === 0;
+    document.getElementById("fila-tracto2").hidden = tramos[1] === 0;
+    document.getElementById("fila-tracto3").hidden = tramos[2] === 0;
+    document.getElementById("fila-tracto4").hidden = tramos[3] === 0;
 
-    var ministerioHacienda = tracto1 + tracto2 + tracto3 + tracto4;
-    document.getElementById("tracto1").textContent = new Intl.NumberFormat('es-CR').format(tracto1.toFixed(2));
-    document.getElementById("tracto2").textContent = new Intl.NumberFormat('es-CR').format(tracto2.toFixed(2));
-    document.getElementById("tracto3").textContent = new Intl.NumberFormat('es-CR').format(tracto3.toFixed(2));
-    document.getElementById("tracto4").textContent = new Intl.NumberFormat('es-CR').format(tracto4.toFixed(2));
-    document.getElementById("rebajoMH").textContent = new Intl.NumberFormat('es-CR').format(ministerioHacienda.toFixed(2));
-    document.getElementById("hacienda").textContent = new Intl.NumberFormat('es-CR').format(ministerioHacienda.toFixed(2));    
+    var ministerioHacienda = calcularRentaSalarial(sueldoBruto, creditos);
+    document.getElementById("tracto1").textContent = formatearMonto(tramos[0]);
+    document.getElementById("tracto2").textContent = formatearMonto(tramos[1]);
+    document.getElementById("tracto3").textContent = formatearMonto(tramos[2]);
+    document.getElementById("tracto4").textContent = formatearMonto(tramos[3]);
+    document.getElementById("rebajoMH").textContent = formatearMonto(ministerioHacienda);
+    document.getElementById("hacienda").textContent = formatearMonto(ministerioHacienda);
     
     return ministerioHacienda;
+}
+
+function calcularDesgloseRenta(sueldoBruto) {
+    var salario = Number(sueldoBruto) || 0;
+    return COSTA_RICA_LABOR_RATES.rentaSalarial.tramosMensuales
+        .filter(function (tramo) { return tramo.tasa > 0; })
+        .map(function (tramo) {
+            if (salario <= tramo.desde) {
+                return 0;
+            }
+
+            var limiteSuperior = Math.min(salario, tramo.hasta);
+            return (limiteSuperior - tramo.desde) * tramo.tasa;
+        });
+}
+
+function formatearMonto(monto) {
+    return new Intl.NumberFormat('es-CR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }).format(Number(monto) || 0);
 }
 
 function otro(){

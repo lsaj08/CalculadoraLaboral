@@ -40,6 +40,10 @@ input[type="number"] {
     border-radius: 3px;
 }
 
+input[type="checkbox"] {
+    margin-right: 6px;
+}
+
 button {
     display: block;
     width: 100%;
@@ -79,6 +83,16 @@ table th {
     color: white;
 }
 
+#tablaPatronal th {
+    background-color: crimson;
+    color: white;
+}
+
 .total-row {
     font-weight: bold;
+}
+
+.nota-legal {
+    font-size: 0.9rem;
+    line-height: 1.4;
 }
