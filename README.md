@@ -106,4 +106,3 @@ Los valores pueden cambiar según normativa vigente, actualizaciones oficiales o
 - App estática.
 - Sin dependencias.
 - Sin `package.json`.
-- Tests eliminados por decisión manual del propietario del repositorio.
