@@ -13,15 +13,18 @@
         <div id="calculator">
             <div class="form-group" id="Data">
                 <label for="sueldoBruto">Sueldo Bruto Mensual:</label>
-                <input type="number" id="sueldoBruto" placeholder="Ingrese el sueldo bruto" step="0.01">
-                <label for="hijos">Hijos para crédito fiscal:</label>
-                <input type="number" id="hijos" value="0" min="0" step="1">
-                <label>
-                    <input type="checkbox" id="conyuge">
-                    Aplicar crédito por cónyuge
-                </label>
-                <button onclick="calcular()">Calcular</button>
+                <input type="text" inputmode="decimal" id="sueldoBruto" placeholder="Ingrese el sueldo bruto">
+                <div class="currency-group">
+                    <label for="monedaSalario">Moneda del salario:</label>
+                    <select id="monedaSalario">
+                        <option value="CRC" selected>Colones (₡)</option>
+                        <option value="USD">Dólares ($)</option>
+                    </select>
+                </div>
+                <p id="mensajeError" class="mensaje-error" hidden="true"></p>
+                <button id="botonCalcular" onclick="calcular()">Calcular</button>
             </div>
+            <div id="detalleTipoCambio" class="tipo-cambio-resumen" hidden="true"></div>
             <table id="Resumen" hidden="true">
                 <caption><h3>Resumen</h3></caption>
                 <tr>
@@ -79,62 +82,6 @@
                     <td>₡<span id="rebajoCCSS">0.00</span></td>
                 </tr>
             </table>
-            <p class="nota-legal">El cálculo de cargas patronales es referencial; la prima de Riesgos del Trabajo puede variar.</p>
-            <table id="tablaPatronal">
-                <tr>
-                    <th>Concepto patronal referencial</th>
-                    <th>Porcentaje</th>
-                </tr>
-                <tr>
-                    <td>SEM</td>
-                    <td>9.25%</td>
-                </tr>
-                <tr>
-                    <td>IVM</td>
-                    <td>5.58%</td>
-                </tr>
-                <tr>
-                    <td>Banco Popular cuota patronal</td>
-                    <td>0.25%</td>
-                </tr>
-                <tr>
-                    <td>Asignaciones Familiares / FODESAF</td>
-                    <td>5.00%</td>
-                </tr>
-                <tr>
-                    <td>IMAS</td>
-                    <td>0.50%</td>
-                </tr>
-                <tr>
-                    <td>INA</td>
-                    <td>1.50%</td>
-                </tr>
-                <tr>
-                    <td>Banco Popular LPT patrono</td>
-                    <td>0.25%</td>
-                </tr>
-                <tr>
-                    <td>Fondo de Capitalización Laboral</td>
-                    <td>1.50%</td>
-                </tr>
-                <tr>
-                    <td>Fondo de Pensiones Complementarias</td>
-                    <td>2.00%</td>
-                </tr>
-                <tr>
-                    <td>INS / Riesgos del Trabajo referencial</td>
-                    <td>1.00%</td>
-                </tr>
-                <tr class="total-row">
-                    <td>Total patronal aproximado</td>
-                    <td>26.83%</td>
-                </tr>
-                <tr class="total-row">
-                    <td>Total obrero-patronal referencial</td>
-                    <td>37.66%</td>
-                </tr>
-            </table>
-            <p class="nota-legal">El impuesto sobre la renta se calcula de forma progresiva según los tramos publicados por Hacienda.</p>
             <table id="tablaMH">
                 <tr>
                     <th>Concepto</th>

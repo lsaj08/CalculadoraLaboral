@@ -33,15 +33,21 @@ label {
     font-weight: bold;
 }
 
-input[type="number"] {
+input[type="text"],
+select {
     width: 100%;
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 3px;
+    box-sizing: border-box;
 }
 
 input[type="checkbox"] {
     margin-right: 6px;
+}
+
+.currency-group {
+    margin-top: 10px;
 }
 
 button {
@@ -53,6 +59,11 @@ button {
     border: none;
     border-radius: 3px;
     cursor: pointer;
+}
+
+button:disabled {
+    cursor: wait;
+    opacity: 0.75;
 }
 
 table {
@@ -83,11 +94,6 @@ table th {
     color: white;
 }
 
-#tablaPatronal th {
-    background-color: crimson;
-    color: white;
-}
-
 .total-row {
     font-weight: bold;
 }
@@ -95,4 +101,20 @@ table th {
 .nota-legal {
     font-size: 0.9rem;
     line-height: 1.4;
+}
+
+.mensaje-error {
+    color: crimson;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.tipo-cambio-resumen {
+    margin-top: 15px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.tipo-cambio-resumen p {
+    margin: 4px 0;
 }
