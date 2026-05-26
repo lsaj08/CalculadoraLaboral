@@ -15,12 +15,26 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     permissions:
+      id-token: write
       contents: read
     steps:
       - uses: actions/checkout@v5
         with:
           submodules: true
           lfs: false
+
+      - name: Get GitHub OIDC token
+        id: idtoken
+        shell: bash
+        run: |
+          response="$(curl -sSf -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" "${ACTIONS_ID_TOKEN_REQUEST_URL}")"
+          id_token="$(jq -r '.value' <<< "${response}")"
+          if [ -z "${id_token}" ] || [ "${id_token}" = "null" ]; then
+            echo "GitHub did not return an OIDC token." >&2
+            exit 1
+          fi
+          echo "::add-mask::${id_token}"
+          echo "result=${id_token}" >> "${GITHUB_OUTPUT}"
 
       - name: Deploy static site
         id: builddeploy
@@ -32,6 +46,7 @@ jobs:
           api_location: ""
           output_location: ""
           skip_app_build: true
+          github_id_token: ${{ steps.idtoken.outputs.result }}
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
