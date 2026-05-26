@@ -14,6 +14,7 @@ window.addEventListener("DOMContentLoaded", function () {
 
 async function calcular() {
     limpiarMensajeError();
+    limpiarResultados();
     document.getElementById("Resumen").hidden = true;
     document.getElementById("detalleTipoCambio").hidden = true;
 
@@ -44,6 +45,20 @@ async function calcular() {
         } finally {
             activarEstadoCarga(false);
         }
+    }
+
+    var salarioBrutoColones;
+
+    try {
+        salarioBrutoColones = convertirSalarioAColones(sueldoIngresado, moneda, tipoCambio);
+    } catch (error) {
+        mostrarError(error.message || "No fue posible calcular el salario.");
+        return;
+    }
+
+    if (!salarioCumpleMinimoMensual(salarioBrutoColones)) {
+        mostrarError(obtenerMensajeSalarioMinimoMensual());
+        return;
     }
 
     var resultado;
@@ -160,6 +175,32 @@ function limpiarMensajeError() {
     var mensajeError = document.getElementById("mensajeError");
     mensajeError.textContent = "";
     mensajeError.hidden = true;
+}
+
+function limpiarResultados() {
+    var idsMontos = [
+        "bruto",
+        "ccss",
+        "hacienda",
+        "salarioNeto",
+        "montoQuincenal",
+        "rebajoSEM",
+        "rebajoIVM",
+        "rebajoLPT",
+        "rebajoCCSS",
+        "tracto1",
+        "tracto2",
+        "tracto3",
+        "tracto4",
+        "rebajoMH"
+    ];
+
+    idsMontos.forEach(function (id) {
+        document.getElementById(id).textContent = formatearMonto(0);
+    });
+
+    document.getElementById("detalleTipoCambio").textContent = "";
+    document.getElementById("Otro").hidden = true;
 }
 
 function activarEstadoCarga(estaCargando) {

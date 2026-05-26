@@ -6,6 +6,7 @@
 const EXCHANGE_RATE_API_URL = 'https://api.hacienda.go.cr/indicadores/tc/dolar';
 const EXCHANGE_RATE_CACHE_KEY = 'calculadoraLaboral.tipoCambioDolar';
 const EXCHANGE_RATE_CACHE_TTL_MS = 60 * 60 * 1000;
+const MINIMUM_MONTHLY_SALARY_CRC = 373092.30;
 
 const COSTA_RICA_LABOR_RATES = {
     actualizadoAl: '2026-05-20',
@@ -49,7 +50,25 @@ const COSTA_RICA_LABOR_RATES = {
 
 // Fuente renta: Ministerio de Hacienda, Tramos de renta periodo fiscal 2026.
 // Fuente CCSS: Calculadora patronal / informacion para patronos CCSS, cuotas vigentes 2026.
+// Fuente salario minimo: Decreto N. 45303-MTSS, salarios minimos sector privado 2026.
 // Fecha de actualizacion: 2026-05-20.
+
+function formatearMonedaCRC(monto) {
+    return new Intl.NumberFormat('es-CR', {
+        style: 'currency',
+        currency: 'CRC'
+    }).format(Number(monto) || 0);
+}
+
+function salarioCumpleMinimoMensual(salarioBrutoColones) {
+    return Number(salarioBrutoColones) >= MINIMUM_MONTHLY_SALARY_CRC;
+}
+
+function obtenerMensajeSalarioMinimoMensual() {
+    return 'No se puede calcular: el salario ingresado es menor al salario mínimo mensual de referencia en Costa Rica. ' +
+        'El salario mínimo mensual para trabajador en ocupación no calificada genérico es ' +
+        formatearMonedaCRC(MINIMUM_MONTHLY_SALARY_CRC) + '.';
+}
 
 function redondearColones(monto) {
     return Math.round((Number(monto) + Number.EPSILON) * 100) / 100;
@@ -299,6 +318,7 @@ async function obtenerTipoCambioCompraDolar(opciones) {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
         EXCHANGE_RATE_API_URL,
+        MINIMUM_MONTHLY_SALARY_CRC,
         COSTA_RICA_LABOR_RATES,
         calcularCCSSTrabajador,
         calcularRentaSalarial,
@@ -306,14 +326,18 @@ if (typeof module !== 'undefined' && module.exports) {
         calcularSalarioNetoDesdeEntrada,
         convertirSalarioAColones,
         extraerCompraDolarHacienda,
+        formatearMonedaCRC,
         formatNumberWithSpaces,
         parseFormattedNumber,
+        salarioCumpleMinimoMensual,
+        obtenerMensajeSalarioMinimoMensual,
         obtenerTipoCambioCompraDolar
     };
 }
 
 if (typeof window !== 'undefined') {
     window.EXCHANGE_RATE_API_URL = EXCHANGE_RATE_API_URL;
+    window.MINIMUM_MONTHLY_SALARY_CRC = MINIMUM_MONTHLY_SALARY_CRC;
     window.COSTA_RICA_LABOR_RATES = COSTA_RICA_LABOR_RATES;
     window.calcularCCSSTrabajador = calcularCCSSTrabajador;
     window.calcularRentaSalarial = calcularRentaSalarial;
@@ -321,7 +345,10 @@ if (typeof window !== 'undefined') {
     window.calcularSalarioNetoDesdeEntrada = calcularSalarioNetoDesdeEntrada;
     window.convertirSalarioAColones = convertirSalarioAColones;
     window.extraerCompraDolarHacienda = extraerCompraDolarHacienda;
+    window.formatearMonedaCRC = formatearMonedaCRC;
     window.formatNumberWithSpaces = formatNumberWithSpaces;
     window.parseFormattedNumber = parseFormattedNumber;
+    window.salarioCumpleMinimoMensual = salarioCumpleMinimoMensual;
+    window.obtenerMensajeSalarioMinimoMensual = obtenerMensajeSalarioMinimoMensual;
     window.obtenerTipoCambioCompraDolar = obtenerTipoCambioCompraDolar;
 }
